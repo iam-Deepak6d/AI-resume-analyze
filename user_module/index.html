@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Analyzer — TalentLens</title>
+  <base href="/user/">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Candidate Navigation Header -->
+  <header class="site-header" id="site-header">
+    <div class="container nav-wrap">
+      <a href="/user" class="brand-logo">
+        <div class="brand-icon">⚡</div>
+        <span>TalentLens</span>
+        <span class="brand-pill">Candidate</span>
+      </a>
+
+      <ul class="nav-links">
+        <li class="nav-item active" id="nav-analyzer">Analyzer</li>
+        <li class="nav-item" id="nav-bullet-tool">Bullet Rewriter</li>
+        <li class="nav-item" id="nav-jobs">Matching Jobs</li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- User Profile Chip -->
+        <div class="user-profile-chip" id="user-profile-nav">
+          <div class="user-chip-avatar" id="user-chip-avatar">S</div>
+          <span class="user-chip-name" id="user-chip-name">Student</span>
+          <span class="user-chip-role" id="user-chip-role" style="display: none;">Student</span>
+        </div>
+
+        <!-- Switch to Admin Console -->
+        <a href="/admin" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 0.35rem 0.7rem;">
+          Admin Console ↗
+        </a>
+
+        <!-- Sign Out Button -->
+        <button class="btn btn-secondary btn-sm" id="user-logout-btn" title="Sign Out">
+          Sign Out
+        </button>
+
+        <!-- Theme Toggle -->
+        <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+          ☀️
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Candidate Analyzer Content -->
+  <main id="analyzer-view">
+    <div class="container">
+      
+      <!-- Page Intro -->
+      <div class="page-intro">
+        <h1 class="page-title">Resume Analyzer</h1>
+        <p class="page-subtitle">Upload your resume to check ATS compatibility, identify skill gaps, and match with open jobs.</p>
+      </div>
+
+      <!-- Resume Input Card -->
+      <div class="card">
+        <div class="card-title">1. Provide Your Resume</div>
+        <div class="card-desc">Choose a file, paste your text directly, or select a sample resume to test immediately.</div>
+
+        <!-- Input Method Tabs -->
+        <div class="tab-pills">
+          <button type="button" class="tab-btn input-tab-btn active" data-target="tab-upload">
+            📁 Upload File
+          </button>
+          <button type="button" class="tab-btn input-tab-btn" data-target="tab-paste">
+            📝 Paste Text
+          </button>
+          <button type="button" class="tab-btn input-tab-btn" data-target="tab-presets">
+            ⚡ Sample Resumes
+          </button>
+        </div>
+
+        <!-- Tab 1: Upload Dropzone -->
+        <div class="tab-pane" id="tab-upload">
+          <div class="dropzone-area" id="dropzone-area">
+            <input type="file" id="resume-file-input" accept=".pdf,.docx,.txt" style="display: none;">
+            <div class="dropzone-icon">📄</div>
+            <div class="dropzone-text-main">Drop your resume here, or click to browse</div>
+            <div class="dropzone-text-sub">Accepts PDF, Word (DOCX), or plain text files</div>
+            
+            <div class="file-preview-pill" id="file-preview-pill" style="display: none;">
+              <span>📎</span>
+              <span id="file-name-text">resume.pdf</span>
+              <button type="button" class="remove-file-btn" id="remove-file-btn" title="Remove file">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Paste Raw Text -->
+        <div class="tab-pane" id="tab-paste" style="display: none;">
+          <textarea id="resume-raw-textarea" class="custom-textarea" placeholder="Paste your resume text here (experience, skills, projects, and education)..."></textarea>
+        </div>
+
+        <!-- Tab 3: Presets Grid -->
+        <div class="tab-pane" id="tab-presets" style="display: none;">
+          <div class="preset-grid">
+            <div class="preset-card" onclick="loadSampleResume('priya')">
+              <div class="preset-title">Priya Sharma 🤖</div>
+              <div class="preset-meta">Data Science • Python, PyTorch, ML</div>
+            </div>
+            <div class="preset-card" onclick="loadSampleResume('rohit')">
+              <div class="preset-title">Rohit Verma ⚙️</div>
+              <div class="preset-meta">Backend Engineer • Java, Spring Boot, SQL</div>
+            </div>
+            <div class="preset-card" onclick="loadSampleResume('weak')">
+              <div class="preset-title">Draft Resume ⚠️</div>
+              <div class="preset-meta">Needs Work • Missing details & metrics</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Target Role & Submit Form Group -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;" class="form-grid-mobile">
+          <div>
+            <label class="form-label" for="target-role-select">Target Role Benchmark:</label>
+            <select id="target-role-select" class="custom-select">
+              <option value="Frontend Developer">Frontend Developer</option>
+              <option value="Backend Engineer">Backend Engineer</option>
+              <option value="Full Stack Developer" selected>Full Stack Developer</option>
+              <option value="Data Scientist / AI Engineer">Data Scientist / AI Engineer</option>
+              <option value="DevOps & Cloud Engineer">DevOps & Cloud Engineer</option>
+            </select>
+          </div>
+          <div style="display: flex; align-items: flex-end;">
+            <button class="btn btn-primary btn-block btn-lg" id="analyze-resume-btn">
+              Analyze Resume
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <section id="results-section" style="display: none;">
+        
+        <!-- Profile Summary Bar -->
+        <div class="results-header-bar">
+          <div class="candidate-profile-summary">
+            <div class="candidate-avatar" id="result-candidate-avatar">👤</div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <h2 class="candidate-name-title" id="result-candidate-name">Candidate Name</h2>
+                <span class="status-pill ready" id="result-readiness-verdict">Interview Ready</span>
+              </div>
+              <div style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.2rem;" id="result-target-role">
+                Target Role: Full Stack Developer
+              </div>
+              <div class="candidate-contact-links" id="result-contact-links"></div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
+            <button class="btn btn-secondary" id="download-ats-pdf-btn">
+              📄 Download ATS PDF
+            </button>
+            <a href="#jobs-section" class="btn btn-primary">
+              💼 View Matching Jobs
+            </a>
+          </div>
+        </div>
+
+        <!-- Score Overview Cards Grid -->
+        <div class="scores-grid">
+          <div class="score-card main-ats-card">
+            <div class="circular-gauge">
+              <svg viewBox="0 0 100 100">
+                <circle class="gauge-bg" cx="50" cy="50" r="45"></circle>
+                <circle class="gauge-fill" id="gauge-fill-circle" cx="50" cy="50" r="45"></circle>
+              </svg>
+              <div class="gauge-center-text">
+                <div class="gauge-number" id="gauge-ats-number">0</div>
+                <div class="gauge-label">ATS SCORE</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.95rem; font-weight: 600; color: var(--text);">Overall Score</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.35; margin-top: 0.2rem;">
+                Based on structure, skill match, impact, and formatting.
+              </div>
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div>
+              <div class="score-card-title">Structure</div>
+              <div class="score-card-value"><span id="score-val-structure">0</span><span style="font-size: 0.95rem; color: var(--text-dim);">/100</span></div>
+            </div>
+            <div class="mini-progress-bar">
+              <div class="mini-progress-fill" id="progress-fill-structure" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div>
+              <div class="score-card-title">Skills Match</div>
+              <div class="score-card-value"><span id="score-val-skills">0</span><span style="font-size: 0.95rem; color: var(--text-dim);">/100</span></div>
+            </div>
+            <div class="mini-progress-bar">
+              <div class="mini-progress-fill" id="progress-fill-skills" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div>
+              <div class="score-card-title">Impact & Metrics</div>
+              <div class="score-card-value"><span id="score-val-impact">0</span><span style="font-size: 0.95rem; color: var(--text-dim);">/100</span></div>
+            </div>
+            <div class="mini-progress-bar">
+              <div class="mini-progress-fill" id="progress-fill-impact" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div>
+              <div class="score-card-title">Brevity & Layout</div>
+              <div class="score-card-value"><span id="score-val-brevity">0</span><span style="font-size: 0.95rem; color: var(--text-dim);">/100</span></div>
+            </div>
+            <div class="mini-progress-bar">
+              <div class="mini-progress-fill" id="progress-fill-brevity" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Strengths & Fixes -->
+        <div class="two-col-grid">
+          <div class="card" style="margin-bottom: 0;">
+            <div class="card-title" style="color: var(--success-text);">Strengths</div>
+            <div class="card-desc">Positive signals detected in your resume</div>
+            <div id="list-strengths"></div>
+          </div>
+
+          <div class="card" style="margin-bottom: 0;">
+            <div class="card-title" style="color: var(--warning-text);">Recommendations</div>
+            <div class="card-desc">Key adjustments to improve your ATS score</div>
+            <div id="list-fixes"></div>
+          </div>
+        </div>
+
+        <!-- Skills Breakdown -->
+        <div class="card" style="margin-top: 1.5rem;">
+          <div class="card-title">Detected Skills</div>
+          <div class="card-desc">Competencies parsed from your resume, grouped by area</div>
+          <div id="skills-categorized-container"></div>
+        </div>
+
+        <!-- Skill Gap Radar & Roadmap -->
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+            <div class="card-title">Skill Comparison & 4-Week Plan</div>
+            <span class="status-pill ready" id="gap-match-pct">Match: 85%</span>
+          </div>
+          <div class="card-desc">Compare your profile against the role benchmark and follow a structured study plan.</div>
+
+          <div class="radar-roadmap-grid">
+            <div>
+              <div class="radar-canvas-container">
+                <canvas id="skill-radar-canvas"></canvas>
+              </div>
+              <div style="margin-top: 1.25rem;">
+                <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem;">Missing Core Skills:</div>
+                <div class="skill-pills-wrap" id="missing-core-pills"></div>
+              </div>
+              <div style="margin-top: 0.85rem;">
+                <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem;">Recommended Skills:</div>
+                <div class="skill-pills-wrap" id="missing-rec-pills"></div>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.75rem;">Weekly Learning Roadmap</div>
+              <div class="roadmap-timeline" id="roadmap-timeline-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Bullet Rewriter -->
+        <div class="card" id="bullet-tool-section">
+          <div class="card-title">Resume Bullet Rewriter</div>
+          <div class="card-desc">Transform plain project descriptions into high-impact STAR accomplishment bullets.</div>
+
+          <div class="bullet-optimizer-box">
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <input type="text" id="bullet-input-text" class="custom-select" style="flex: 1; min-width: 260px;" placeholder="e.g. Worked on backend database optimization and helped team fix bugs">
+              <button class="btn btn-primary" id="enhance-bullet-btn">Rewrite Bullet</button>
+            </div>
+            <div id="bullet-alternatives-wrap"></div>
+          </div>
+        </div>
+
+        <!-- Matched Job Opportunities -->
+        <div class="card" id="jobs-section">
+          <div class="card-title">Matching Job Opportunities</div>
+          <div class="card-desc">Open roles sorted by skill overlap with your resume profile.</div>
+          <div class="jobs-grid" id="job-cards-container"></div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>TalentLens • Candidate Resume Intelligence</p>
+    </div>
+  </footer>
+
+  <script src="js/samples.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TalentLens — Resume Analyzer & Career Portal</title>
+  <meta name="description" content="Simple, intelligent resume analysis and talent matching. Evaluate ATS scores, bridge skill gaps, and match with tech roles.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-hover: #162032;
+      --border: #1f293d;
+      --border-hover: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-soft: rgba(79, 70, 229, 0.12);
+      --admin-accent: #e11d48;
+      --admin-soft: rgba(225, 29, 72, 0.12);
+      --success: #10b981;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Navigation */
+    .top-nav {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .nav-container {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-badge {
+      width: 30px;
+      height: 30px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+    }
+
+    /* Main Container */
+    .main-wrap {
+      flex: 1;
+      max-width: 1040px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 3rem;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 9999px;
+      background: var(--primary-soft);
+      border: 1px solid rgba(79, 70, 229, 0.25);
+      color: #a5b4fc;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-tag .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.85rem;
+      color: #ffffff;
+    }
+
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .portal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .portal-card:hover {
+      border-color: var(--border-hover);
+      background: var(--card-hover);
+    }
+
+    .card-icon-title {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      background: var(--primary-soft);
+      border: 1px solid rgba(79, 70, 229, 0.25);
+      color: #a5b4fc;
+    }
+
+    .portal-card.admin-card .card-icon {
+      background: var(--admin-soft);
+      border-color: rgba(225, 29, 72, 0.25);
+      color: #fda4af;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+      margin-bottom: 1.5rem;
+      flex: 1;
+    }
+
+    .feature-points {
+      list-style: none;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .feature-point {
+      font-size: 0.86rem;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .feature-point .check {
+      color: var(--success);
+      font-size: 0.85rem;
+    }
+
+    /* Actions */
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: auto;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-admin {
+      background: var(--admin-accent);
+      color: #ffffff;
+    }
+
+    .btn-admin:hover {
+      background: #be123c;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Features Strip */
+    .features-strip {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .strip-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .strip-item span.icon {
+      font-size: 1rem;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 640px) {
+      .hero-title {
+        font-size: 1.75rem;
+      }
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .features-strip {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="top-nav">
+    <div class="nav-container">
+      <a href="/" class="brand">
+        <div class="brand-badge">⚡</div>
+        <span>TalentLens</span>
+      </a>
+      <div class="nav-links">
+        <a href="/user" class="nav-link">Candidate Portal</a>
+        <a href="/admin" class="nav-link">Admin Console</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-wrap">
+
+    <div class="hero">
+      <div class="hero-tag">
+        <span class="dot"></span>
+        <span>Resume Intelligence Engine</span>
+      </div>
+      <h1 class="hero-title">Simple resume analysis & talent matching</h1>
+      <p class="hero-desc">
+        Evaluate your resume against ATS standards, identify missing skills, and discover entry-level tech opportunities.
+      </p>
+    </div>
+
+    <!-- Portal Cards -->
+    <div class="cards-grid">
+
+      <!-- Candidate Portal Card -->
+      <div class="portal-card">
+        <div class="card-icon-title">
+          <div class="card-icon">🎓</div>
+          <div>
+            <h2 class="card-title">Candidate Portal</h2>
+          </div>
+        </div>
+        <p class="card-desc">
+          Upload your resume to check your ATS compatibility score, compare skills against industry benchmarks, and get matched with live jobs.
+        </p>
+
+        <ul class="feature-points">
+          <li class="feature-point">
+            <span class="check">✓</span>
+            <span>Instant ATS score with formatting and impact feedback</span>
+          </li>
+          <li class="feature-point">
+            <span class="check">✓</span>
+            <span>Skill gap radar & 4-week learning roadmap</span>
+          </li>
+          <li class="feature-point">
+            <span class="check">✓</span>
+            <span>AI bullet rewriter using the STAR method</span>
+          </li>
+          <li class="feature-point">
+            <span class="check">✓</span>
+            <span>Matched job openings with 1-click apply & PDF download</span>
+          </li>
+        </ul>
+
+        <div class="card-actions">
+          <a href="/user" class="btn btn-primary">Open Candidate Portal →</a>
+          <button type="button" class="btn btn-secondary" onclick="quickLogin('student')">
+            Quick Demo: Student Access
+          </button>
+        </div>
+      </div>
+
+      <!-- Recruiter & Admin Console Card -->
+      <div class="portal-card admin-card">
+        <div class="card-icon-title">
+          <div class="card-icon">🛡️</div>
+          <div>
+            <h2 class="card-title">Admin & Recruiter Console</h2>
+          </div>
+        </div>
+        <p class="card-desc">
+          Review candidate resumes, monitor applicant activity in real time, publish job openings, and auto-rank applicants for any role.
+        </p>
+
+        <ul class="feature-points">
+          <li class="feature-point">
+            <span class="check">✓</span>
+            <span>Live activity audit stream of user logins and actions</span>
+          </li>
+          <li class="feature-point">
+            <span class="check">✓</span>
+            <span>Autonomous candidate ranking for job openings</span>
+          </li>
+          <li class="feature-point">
+            <span class="check">✓</span>
+            <span>Manage job postings and review applicant fit scores</span>
+          </li>
+          <li class="feature-point">
+            <span class="check">✓</span>
+            <span>User account management and platform metrics</span>
+          </li>
+        </ul>
+
+        <div class="card-actions">
+          <a href="/admin" class="btn btn-admin">Open Admin Console →</a>
+          <button type="button" class="btn btn-secondary" onclick="quickLogin('admin')">
+            Quick Demo: Admin Access
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Features Strip -->
+    <div class="features-strip">
+      <div class="strip-item">
+        <span class="icon">🎯</span>
+        <span>ATS Compatibility Score</span>
+      </div>
+      <div class="strip-item">
+        <span class="icon">📊</span>
+        <span>Skill Gap Radar</span>
+      </div>
+      <div class="strip-item">
+        <span class="icon">🗺️</span>
+        <span>4-Week Learning Roadmap</span>
+      </div>
+      <div class="strip-item">
+        <span class="icon">✨</span>
+        <span>STAR Bullet Rewriter</span>
+      </div>
+      <div class="strip-item">
+        <span class="icon">💼</span>
+        <span>Job Matching</span>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>TalentLens • Simple Resume Intelligence & Career Platform</p>
+  </footer>
+
+  <script>
+    async function quickLogin(role) {
+      const email = role === 'admin' ? 'admin@talentlens.ai' : 'student@demo.com';
+      const password = role === 'admin' ? 'admin123' : 'student123';
+      const targetUrl = role === 'admin' ? '/admin' : '/user';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.token) {
+          localStorage.setItem('talentlens_token', data.token);
+          localStorage.setItem('talentlens_user', JSON.stringify(data.user));
+          window.location.href = targetUrl;
+        } else {
+          window.location.href = targetUrl;
+        }
+      } catch (e) {
+        window.location.href = targetUrl;
+      }
+    }
+  </script>
+</body>
+</html>

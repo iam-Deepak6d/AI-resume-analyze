@@ -1,0 +1,37 @@
+PRIYA SHARMA
+Hyderabad, India | +91 9123456789 | priya.sharma.ai@email.com
+github.com/priyasharma-ml | linkedin.com/in/priyasharma-ai
+
+PROFESSIONAL SUMMARY
+Aspiring Data Scientist and AI enthusiast with solid foundations in Python, mathematical statistics, machine learning algorithms, and deep neural networks. Experienced in building end-to-end data pipelines, exploratory data analysis, and deploying ML models into containerized microservices.
+
+TECHNICAL SKILLS
+• Languages: Python, SQL, R, Bash
+• AI / Machine Learning: Scikit-Learn, PyTorch, TensorFlow, Pandas, NumPy, NLP, Transformers, OpenCV, HuggingFace
+• Tools & Visualization: Git, Docker, Jupyter, Tableau, Matplotlib, Seaborn, FastAPI
+• Databases & Cloud: PostgreSQL, SQLite, AWS S3, Google Cloud Platform
+
+KEY PROJECTS
+AI Customer Churn Prediction & Retention Engine | Python, Scikit-Learn, FastAPI, Docker
+• Trained gradient boosting and random forest classifiers across 50,000+ customer records, achieving an ROC-AUC score of 0.92.
+• Formulated feature engineering pipelines that surfaced top 5 churn risk factors, assisting product teams to boost retention by 18%.
+• Packaged the predictive model into a lightweight FastAPI service deployed via Docker container on AWS EC2.
+
+Automated Clinical Text Sentiment & Entity Extractor | PyTorch, HuggingFace, NLP
+• Fine-tuned a BERT-based transformer model on 12,000 medical research abstracts for Named Entity Recognition (NER).
+• Accelerated inference speed by 40% utilizing PyTorch model quantization and ONNX runtime optimization.
+• Published interactive web demo on Hugging Face Spaces receiving 500+ active student engagements.
+
+EDUCATION
+B.Tech in Artificial Intelligence & Data Science
+Vellore Institute of Technology (VIT) | 2021 – 2025
+CGPA: 9.1 / 10.0 | Relevant Coursework: Linear Algebra, Machine Learning, Deep Learning, Big Data Analytics
+
+INTERNSHIP EXPERIENCE
+Data Science Intern | InfoAnalytics Solutions (Jan 2025 – Present)
+• Built automated Python ETL data cleaning scripts ingesting 200,000 daily transaction records from PostgreSQL into analytical data marts.
+• Designed executive Tableau dashboards monitoring KPI metrics, eliminating 6 hours of manual spreadsheet reporting weekly.
+
+CERTIFICATIONS
+• DeepLearning.AI Deep Learning Specialization – Andrew Ng
+• Google Cloud Certified: Associate Cloud Engineer (In Progress)

@@ -1,0 +1,39 @@
+ROHIT VERMA
+Bengaluru, India | +91 9988776655 | rohit.verma@email.com
+github.com/rohitverma-code | linkedin.com/in/rohitverma-backend
+
+CAREER OBJECTIVE
+Results-oriented software developer passionate about building resilient backend microservices, distributed systems, and scalable database architectures. Eager to leverage strong knowledge in Java, Spring Boot, SQL, and Docker as a Junior Backend Software Engineer.
+
+TECHNICAL SKILLS
+• Programming Languages: Java, Python, C++, SQL, Go Basics
+• Backend Frameworks: Spring Boot, Spring Data JPA, Hibernate, Node.js, Express
+• Databases & Caching: PostgreSQL, MySQL, Redis, MongoDB
+• Cloud & DevOps: Docker, Git, Linux, AWS EC2, Jenkins CI/CD, Postman
+• Core Concepts: Object-Oriented Design (OOP), Microservices, RESTful APIs, Concurrency, DSA
+
+ENGINEERING PROJECTS
+Distributed Flash-Sale Booking Service | Java, Spring Boot, Redis, PostgreSQL
+• Architected a high-concurrency order placement backend designed to handle flash-sale surges up to 8,000 transactions/sec.
+• Integrated Redis distributed locks and caching layers, preventing race conditions and cutting database response latency by 55%.
+• Dockerized all service components and orchestrated deployment using Docker Compose with zero data inconsistency.
+
+Real-Time Multi-Room Collaborative Chat | Node.js, WebSockets, MongoDB, JWT
+• Developed low-latency bidirectional messaging server supporting 1,500 simultaneous persistent socket connections.
+• Implemented JWT authentication and bcrypt password hashing ensuring enterprise-grade API endpoint security.
+• Wrote comprehensive unit and integration tests using JUnit and Mockito, securing 88% branch test coverage.
+
+EDUCATION
+B.E. in Computer Science Engineering
+PES University, Bangalore | 2021 – 2025
+CGPA: 8.6 / 10.0
+
+WORK EXPERIENCE
+Software Developer Intern | FinNext Innovations (Aug 2024 – Nov 2024)
+• Built 8 critical RESTful APIs for customer account onboarding and financial KYC document verification.
+• Optimized slow-running PostgreSQL queries using composite B-Tree indexes, reducing 95th percentile query latency from 850ms to 92ms.
+• Collaborated in bi-weekly Agile Scrum sprints and participated in rigorous code reviews.
+
+HONORS & AWARDS
+• Global Rank 452 – CodeChef Starters Competition (Max Rating: 1820, 4-Star)
+• Solved 500+ LeetCode problems covering Trees, Graphs, Dynamic Programming, and Concurrency

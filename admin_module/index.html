@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Console — TalentLens</title>
+  <base href="/admin/">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Admin Navigation Header -->
+  <header class="site-header" id="site-header">
+    <div class="container nav-wrap">
+      <a href="/admin" class="brand-logo">
+        <div class="brand-icon">🛡️</div>
+        <span>TalentLens</span>
+        <span class="brand-pill">Admin</span>
+      </a>
+
+      <div class="nav-actions">
+        <!-- Admin Profile Chip -->
+        <div class="user-profile-chip">
+          <div class="user-chip-avatar">A</div>
+          <span class="user-chip-name" id="admin-chip-name">Admin</span>
+          <span class="user-chip-role" style="display: none;">Admin</span>
+        </div>
+
+        <!-- Candidate View Switcher -->
+        <a href="/user" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 0.35rem 0.7rem;">
+          Candidate Portal ↗
+        </a>
+
+        <!-- Sign Out Button -->
+        <button class="btn btn-secondary btn-sm" id="admin-logout-btn" title="Sign Out">
+          Sign Out
+        </button>
+
+        <!-- Theme Toggle -->
+        <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+          ☀️
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Admin Dashboard Container -->
+  <main class="container">
+    
+    <!-- Top Title Bar -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Admin Console</h1>
+        <p class="page-subtitle">Platform overview, candidate pool, and job postings.</p>
+      </div>
+      <div style="display: flex; gap: 0.65rem;">
+        <button type="button" class="btn btn-secondary" id="admin-refresh-btn">
+          🔄 Refresh
+        </button>
+        <button type="button" class="btn btn-primary" id="admin-post-job-btn">
+          ➕ Post Job
+        </button>
+      </div>
+    </div>
+
+    <!-- Admin Card -->
+    <div class="card">
+
+      <!-- Admin Subnavigation Tabs -->
+      <div class="admin-subtabs">
+        <button type="button" class="admin-subtab-btn active" data-admin-pane="admin-pane-overview">Overview</button>
+        <button type="button" class="admin-subtab-btn" data-admin-pane="admin-pane-audit">Activity Stream</button>
+        <button type="button" class="admin-subtab-btn" data-admin-pane="admin-pane-users">User Directory</button>
+        <button type="button" class="admin-subtab-btn" data-admin-pane="admin-pane-ranker">Candidate Ranker</button>
+        <button type="button" class="admin-subtab-btn" data-admin-pane="admin-pane-candidates">All Resumes</button>
+      </div>
+
+      <!-- PANE 1: Platform Overview & KPIs -->
+      <div class="admin-pane" id="admin-pane-overview">
+        <div class="admin-metrics-grid">
+          <div class="admin-metric-card">
+            <div class="admin-metric-label">Users</div>
+            <div class="admin-metric-val" id="metric-total-users">0</div>
+          </div>
+          <div class="admin-metric-card">
+            <div class="admin-metric-label">Resumes</div>
+            <div class="admin-metric-val" id="metric-total-candidates">0</div>
+          </div>
+          <div class="admin-metric-card">
+            <div class="admin-metric-label">Avg ATS Score</div>
+            <div class="admin-metric-val" id="metric-avg-ats">0%</div>
+          </div>
+          <div class="admin-metric-card">
+            <div class="admin-metric-label">Active Jobs</div>
+            <div class="admin-metric-val" id="metric-active-jobs">0</div>
+          </div>
+          <div class="admin-metric-card">
+            <div class="admin-metric-label">Applications</div>
+            <div class="admin-metric-val" id="metric-applications">0</div>
+          </div>
+          <div class="admin-metric-card">
+            <div class="admin-metric-label">Logs Recorded</div>
+            <div class="admin-metric-val" id="metric-total-logs">0</div>
+          </div>
+        </div>
+
+        <div class="two-col-grid">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.6rem;">Top In-Demand Skills</div>
+            <div class="skill-pills-wrap" id="top-in-demand-skills-wrap"></div>
+          </div>
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 0.6rem;">Common Student Skill Deficits</div>
+            <div class="skill-pills-wrap" id="top-fresher-gaps-wrap"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 2: Live Activity Audit Stream -->
+      <div class="admin-pane" id="admin-pane-audit" style="display: none;">
+        <div style="margin-bottom: 1rem;">
+          <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text);">Live Activity Log</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Real-time record of logins, analyses, applications, and downloads.</p>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>User</th>
+                <th>Role</th>
+                <th>Action</th>
+                <th>Details</th>
+                <th>IP</th>
+              </tr>
+            </thead>
+            <tbody id="audit-stream-table-body">
+              <tr><td colspan="6" style="text-align: center;">Loading activity stream...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PANE 3: Users Directory -->
+      <div class="admin-pane" id="admin-pane-users" style="display: none;">
+        <div style="margin-bottom: 1rem;">
+          <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text);">Registered Users</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Manage registered candidate and administrator accounts.</p>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Track</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <tr><td colspan="7" style="text-align: center;">Loading users...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PANE 4: Candidate Ranker -->
+      <div class="admin-pane" id="admin-pane-ranker" style="display: none;">
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text);">Candidate Match Ranker</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Select any open job to rank applicants by skill overlap.</p>
+        </div>
+        <div style="max-width: 480px; margin-bottom: 1.5rem;">
+          <label class="form-label" for="ranking-job-select">Select Job Opening:</label>
+          <select id="ranking-job-select" class="custom-select">
+            <option value="">Select a job to evaluate candidates...</option>
+          </select>
+        </div>
+        <div id="ranked-candidates-container">
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Please choose a job above to view ranked candidate matches.</p>
+        </div>
+      </div>
+
+      <!-- PANE 5: All Resumes -->
+      <div class="admin-pane" id="admin-pane-candidates" style="display: none;">
+        <div style="margin-bottom: 1rem;">
+          <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text);">Evaluated Resumes</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Database of parsed resumes and computed ATS benchmarks.</p>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Target Track</th>
+                <th>ATS Score</th>
+                <th>Impact</th>
+                <th>Brevity</th>
+                <th>Skills Count</th>
+                <th>Analyzed At</th>
+              </tr>
+            </thead>
+            <tbody id="candidates-table-body">
+              <tr><td colspan="7" style="text-align: center;">Loading resumes...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Post Job Modal -->
+  <div id="post-job-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <button type="button" class="modal-close-btn" id="job-modal-close">✕</button>
+      <h3 style="font-size: 1.2rem; font-weight: 600; color: var(--text); margin-bottom: 0.3rem;">Post New Job Opening</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Create an entry-level position for candidate matching.</p>
+
+      <form id="post-job-form">
+        <div class="form-group">
+          <label class="form-label" for="job-title">Job Title</label>
+          <input type="text" id="job-title" class="form-input" placeholder="Junior Frontend Developer" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="job-company">Company Name</label>
+          <input type="text" id="job-company" class="form-input" placeholder="Acme Labs" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+          <div class="form-group">
+            <label class="form-label" for="job-location">Location</label>
+            <input type="text" id="job-location" class="form-input" placeholder="Remote / Bengaluru" value="Remote">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="job-salary">Salary Range</label>
+            <input type="text" id="job-salary" class="form-input" placeholder="₹8 - ₹12 LPA" value="₹8 - ₹12 LPA">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="job-required-skills">Required Skills (comma separated)</label>
+          <input type="text" id="job-required-skills" class="form-input" placeholder="React, TypeScript, CSS" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="job-preferred-skills">Preferred Skills (comma separated)</label>
+          <input type="text" id="job-preferred-skills" class="form-input" placeholder="Next.js, Tailwind, Git">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="job-desc">Job Description</label>
+          <textarea id="job-desc" class="form-input" style="min-height: 80px;" placeholder="Brief summary of duties and requirements..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 0.5rem;" id="job-submit-btn">
+          Publish Job Opening
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>TalentLens • Platform Administration Console</p>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

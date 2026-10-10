@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Sign In — TalentLens</title>
+  <base href="/admin/">
+  <link rel="stylesheet" href="css/admin.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+      background: var(--bg);
+    }
+
+    .auth-box {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+
+    .auth-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .auth-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .demo-box {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .demo-box-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 0.65rem 0.85rem;
+      transition: border-color var(--transition);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+    }
+
+    .auth-error {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      font-size: 0.85rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .auth-footer {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-subtle);
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .auth-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .auth-footer a:hover {
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <div class="auth-box">
+    
+    <div class="auth-brand">
+      <div class="brand-icon">🛡️</div>
+      <span>TalentLens Admin</span>
+    </div>
+
+    <h1 class="auth-title">Administrator Sign In</h1>
+    <p class="auth-desc">Sign in to manage candidates and job postings.</p>
+
+    <!-- Quick Demo Box -->
+    <div class="demo-box">
+      <div class="demo-box-label">
+        <span>Quick Demo Access</span>
+        <span style="color: var(--primary-text);">Admin Profile</span>
+      </div>
+      <button type="button" class="btn btn-secondary btn-block btn-sm" onclick="quickLoginAdmin()">
+        Continue as Demo Admin (admin@talentlens.ai)
+      </button>
+    </div>
+
+    <div id="auth-error-msg" class="auth-error"></div>
+
+    <!-- Admin Login Form -->
+    <form id="admin-signin-form">
+      <div class="form-group">
+        <label class="form-label" for="admin-email">Email Address</label>
+        <input type="email" id="admin-email" class="form-input" placeholder="admin@talentlens.ai" required value="admin@talentlens.ai">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="admin-password">Password</label>
+        <input type="password" id="admin-password" class="form-input" placeholder="Password" required value="admin123">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="signin-btn">
+        Sign In to Console
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Looking for student portal? <a href="/user/login">Candidate Portal →</a>
+    </div>
+
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    async function quickLoginAdmin() {
+      try {
+        await API.login('admin@talentlens.ai', 'admin123');
+        window.location.href = '/admin/';
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    function showError(msg) {
+      const errorBox = document.getElementById('auth-error-msg');
+      errorBox.textContent = msg;
+      errorBox.style.display = 'block';
+    }
+
+    document.getElementById('admin-signin-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('admin-email').value.trim();
+      const password = document.getElementById('admin-password').value.trim();
+      const btn = document.getElementById('signin-btn');
+
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+
+      try {
+        const res = await API.login(email, password);
+        if (res.user && res.user.role !== 'admin') {
+          showError('Access denied. Administrator privileges required.');
+          btn.disabled = false;
+          btn.textContent = 'Sign In to Console';
+          return;
+        }
+        window.location.href = '/admin/';
+      } catch (err) {
+        showError(err.message || 'Login failed. Please check your credentials.');
+        btn.disabled = false;
+        btn.textContent = 'Sign In to Console';
+      }
+    });
+  </script>
+</body>
+</html>
